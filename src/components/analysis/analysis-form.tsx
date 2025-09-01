@@ -1,7 +1,7 @@
 'use client';
 
-import { useFormState, useFormStatus } from 'react-dom';
-import { useEffect, useRef, useState } from 'react';
+import { useActionState, useEffect, useRef, useState } from 'react';
+import { useFormStatus } from 'react-dom';
 import Image from 'next/image';
 import { AlertCircle, Image as ImageIcon, Loader2, Send } from 'lucide-react';
 
@@ -43,8 +43,8 @@ export function AnalysisForm({
   analyzeImage: Action;
 }) {
   const { toast } = useToast();
-  const [contentState, contentAction] = useFormState(analyzeContent, { result: null, error: null, timestamp: 0 });
-  const [imageState, imageAction] = useFormState(analyzeImage, { result: null, error: null, timestamp: 0 });
+  const [contentState, contentAction] = useActionState(analyzeContent, { result: null, error: null, timestamp: 0 });
+  const [imageState, imageAction] = useActionState(analyzeImage, { result: null, error: null, timestamp: 0 });
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const imageInputRef = useRef<HTMLInputElement>(null);
   const formRef = useRef<HTMLFormElement>(null);
