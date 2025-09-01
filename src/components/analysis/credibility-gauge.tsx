@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -9,16 +10,14 @@ const getColor = (score: number) => {
 };
 
 export function CredibilityGauge({ score }: { score: number }) {
-  const [displayScore, setDisplayScore] = useState(0);
+  const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
-    const animation = requestAnimationFrame(() => {
-      setDisplayScore(score);
-    });
-    return () => cancelAnimationFrame(animation);
-  }, [score]);
-  
-  const clampedScore = Math.min(Math.max(score, 0), 1);
+    setIsClient(true);
+  }, []);
+
+  const displayScore = isClient ? score : 0;
+  const clampedScore = Math.min(Math.max(displayScore, 0), 1);
   const circumference = 2 * Math.PI * 40;
   const arcLength = (clampedScore * circumference) / 2;
   const color = getColor(clampedScore);
