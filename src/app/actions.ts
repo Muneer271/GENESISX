@@ -9,6 +9,8 @@ import {
   explainCredibilityAssessment,
   analyzeMultimodalContent,
   detectFakeNewsSource,
+  summarizeFactCheck,
+  analyzeEmotionalTone,
 } from '@/ai/flows';
 import type { TextAnalysisResult, ImageAnalysisResult, NewsSourceAnalysisResult } from '@/lib/types';
 
@@ -50,20 +52,24 @@ export async function analyzeContent(
   try {
     const content = validatedFields.data.content;
 
-    const [credibility, categories, biasSentiment, claims] = await Promise.all([
+    const [credibility, categories, biasSentiment, claims, emotionalTone] = await Promise.all([
       analyzeContentCredibility({ content }),
       detectMisinformationCategory({ content }),
       analyzeContentBiasAndSentiment({ content }),
       analyzeContentClaims({ content }),
+      analyzeEmotionalTone({ content }),
     ]);
 
-    const explanation = await explainCredibilityAssessment({
-      content,
-      assessmentScore: credibility.credibilityScore,
-      flaggedPatterns: credibility.flaggedPatterns,
-    });
+    const [explanation, factCheckSummary] = await Promise.all([
+      explainCredibilityAssessment({
+        content,
+        assessmentScore: credibility.credibilityScore,
+        flaggedPatterns: credibility.flaggedPatterns,
+      }),
+      summarizeFactCheck({ claims: claims.claims }),
+    ]);
 
-    const resultData: TextAnalysisResult = { credibility, categories, biasSentiment, claims, explanation };
+    const resultData: TextAnalysisResult = { credibility, categories, biasSentiment, claims, explanation, factCheckSummary, emotionalTone };
 
     return {
       result: { type: 'text', data: resultData },

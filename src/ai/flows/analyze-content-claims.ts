@@ -6,7 +6,8 @@
  * It exports:
  * - `analyzeContentClaims`: An async function that takes text content as input and returns an analysis of individual claims, indicating whether they are credible, misleading, or unsupported.
  * - `AnalyzeContentClaimsInput`: The input type for the analyzeContentClaims function, which is an object containing the content string.
- * - `AnalyzeContentClaimsOutput`: The output type for the analyzeContentClaims function, an array of claim analysis results.
+ * - `AnalyzeContentClaimsOutput`: The output type for the analyzeContentClaims function, an object containing an array of claim analysis results.
+ * - `ClaimAnalysis`: The type for a single claim analysis result.
  */
 
 import {ai} from '@/ai/genkit';
@@ -17,15 +18,17 @@ const AnalyzeContentClaimsInputSchema = z.object({
 });
 export type AnalyzeContentClaimsInput = z.infer<typeof AnalyzeContentClaimsInputSchema>;
 
-const ClaimAnalysisResultSchema = z.object({
+const ClaimAnalysisSchema = z.object({
   claim: z.string().describe('The individual claim extracted from the content.'),
   credibility: z.enum(['credible', 'misleading', 'unsupported']).describe('The assessed credibility of the claim.'),
   reason: z.string().describe('The reasoning behind the credibility assessment.'),
 });
 
-export type ClaimAnalysisResult = z.infer<typeof ClaimAnalysisResultSchema>;
+export type ClaimAnalysis = z.infer<typeof ClaimAnalysisSchema>;
 
-const AnalyzeContentClaimsOutputSchema = z.array(ClaimAnalysisResultSchema).describe('An array of claim analysis results.');
+const AnalyzeContentClaimsOutputSchema = z.object({
+  claims: z.array(ClaimAnalysisSchema).describe('An array of claim analysis results.')
+});
 export type AnalyzeContentClaimsOutput = z.infer<typeof AnalyzeContentClaimsOutputSchema>;
 
 
@@ -37,25 +40,27 @@ const analyzeContentClaimsPrompt = ai.definePrompt({
   name: 'analyzeContentClaimsPrompt',
   input: {schema: AnalyzeContentClaimsInputSchema},
   output: {schema: AnalyzeContentClaimsOutputSchema},
-  prompt: `You are an expert fact-checker and claim analyst. Your task is to analyze the provided text content and break it down into individual, key claims. For each claim, you must assess its credibility, determining whether it is credible, misleading, or unsupported. Provide a brief reason for your assessment. Structure your output as a JSON array, where each object in the array represents a claim and its analysis.
+  prompt: `You are an expert fact-checker and claim analyst. Your task is to analyze the provided text content and break it down into individual, key claims. For each claim, you must assess its credibility, determining whether it is credible, misleading, or unsupported. Provide a brief reason for your assessment. Structure your output as a JSON object with a 'claims' property containing an array of claim objects.
 
 Text Content: {{{content}}}
 
 Example Output:
-[
-  {
-    "claim": "Claim 1: [Specific claim from the text]",
-    "credibility": "[credible/misleading/unsupported]",
-    "reason": "[Brief explanation for the credibility assessment]"
-  },
-  {
-    "claim": "Claim 2: [Specific claim from the text]",
-    "credibility": "[credible/misleading/unsupported]",
-    "reason": "[Brief explanation for the credibility assessment]"
-  }
-]
+{
+  "claims": [
+    {
+      "claim": "Claim 1: [Specific claim from the text]",
+      "credibility": "[credible/misleading/unsupported]",
+      "reason": "[Brief explanation for the credibility assessment]"
+    },
+    {
+      "claim": "Claim 2: [Specific claim from the text]",
+      "credibility": "[credible/misleading/unsupported]",
+      "reason": "[Brief explanation for the credibility assessment]"
+    }
+  ]
+}
 
-Ensure the output is a valid JSON array. Focus on identifying factual claims that can be assessed for truthfulness.
+If no specific claims are found, return an empty array for the "claims" property.
 `,
 });
 

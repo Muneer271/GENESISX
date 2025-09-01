@@ -6,6 +6,8 @@ import type {
   ExplainCredibilityAssessmentOutput,
   AnalyzeMultimodalContentOutput,
   DetectFakeNewsSourceOutput,
+  SummarizeFactCheckOutput,
+  AnalyzeEmotionalToneOutput
 } from '@/ai/flows';
 
 export type TextAnalysisResult = {
@@ -14,6 +16,8 @@ export type TextAnalysisResult = {
   biasSentiment: AnalyzeContentBiasAndSentimentOutput;
   claims: AnalyzeContentClaimsOutput;
   explanation: ExplainCredibilityAssessmentOutput;
+  factCheckSummary: SummarizeFactCheckOutput;
+  emotionalTone: AnalyzeEmotionalToneOutput;
 };
 
 export type ImageAnalysisResult = AnalyzeMultimodalContentOutput;

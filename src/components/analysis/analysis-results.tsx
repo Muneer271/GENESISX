@@ -16,6 +16,8 @@ import {
   ThumbsDown,
   ThumbsUp,
   XCircle,
+  BarChart,
+  Flame,
 } from 'lucide-react';
 import type { AnalysisResult, TextAnalysisResult, ImageAnalysisResult, NewsSourceAnalysisResult } from '@/lib/types';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
@@ -55,6 +57,12 @@ const categoryIcons: { [key: string]: React.ReactNode } = {
   Satire: <SmilePlus className="h-4 w-4" />,
   Bias: <Scale className="h-4 w-4" />,
   Fabrication: <FileEdit className="h-4 w-4" />,
+};
+
+const claimCredibilityIcons: { [key: string]: React.ReactNode } = {
+  credible: <CheckCircle2 className="mr-2 h-5 w-5 flex-shrink-0 text-green-500" title="Supported" />,
+  unsupported: <AlertTriangle className="mr-2 h-5 w-5 flex-shrink-0 text-amber-500" title="Unverified" />,
+  misleading: <XCircle className="mr-2 h-5 w-5 flex-shrink-0 text-red-500" title="False" />,
 };
 
 function TextAnalysisView({ result }: { result: TextAnalysisResult }) {
@@ -99,7 +107,19 @@ function TextAnalysisView({ result }: { result: TextAnalysisResult }) {
         </CardContent>
       </Card>
 
-      <div className="grid gap-6 md:grid-cols-2">
+       <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <BarChart className="text-primary" />
+            Fact-Check Summary
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p className="text-base font-medium">{result.factCheckSummary.summary}</p>
+        </CardContent>
+      </Card>
+
+      <div className="grid gap-6 md:grid-cols-3">
         <Card>
           <CardHeader>
             <CardTitle>Misinformation Categories</CardTitle>
@@ -123,28 +143,41 @@ function TextAnalysisView({ result }: { result: TextAnalysisResult }) {
             <p className="text-sm text-muted-foreground pt-2">{result.biasSentiment.explanation}</p>
           </CardContent>
         </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle>Virality & Emotional Tone</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-2">
+            <p><strong>Tone:</strong> <span className="capitalize">{result.emotionalTone.tone}</span></p>
+            <p><strong>Virality:</strong> <span className="capitalize">{result.emotionalTone.virality}</span></p>
+            <p className="text-sm text-muted-foreground pt-2">{result.emotionalTone.explanation}</p>
+          </CardContent>
+        </Card>
       </div>
       
       <Card>
         <CardHeader>
-          <CardTitle>Claim-by-Claim Analysis</CardTitle>
+          <CardTitle>Claim Breakdown</CardTitle>
+          <CardDescription>Key claims detected in the text, with a credibility verdict for each.</CardDescription>
         </CardHeader>
         <CardContent>
-          <Accordion type="single" collapsible className="w-full">
-            {result.claims.map((claim, i) => (
-              <AccordionItem value={`item-${i}`} key={i}>
-                <AccordionTrigger>
-                  <div className="flex items-center text-left">
-                    {claim.credibility === 'credible' && <CheckCircle2 className="mr-2 h-5 w-5 flex-shrink-0 text-green-500" />}
-                    {claim.credibility === 'misleading' && <AlertTriangle className="mr-2 h-5 w-5 flex-shrink-0 text-amber-500" />}
-                    {claim.credibility === 'unsupported' && <XCircle className="mr-2 h-5 w-5 flex-shrink-0 text-red-500" />}
-                    <span className="font-medium">{claim.claim}</span>
-                  </div>
-                </AccordionTrigger>
-                <AccordionContent className="text-muted-foreground">{claim.reason}</AccordionContent>
-              </AccordionItem>
-            ))}
-          </Accordion>
+          {result.claims.claims.length > 0 ? (
+            <Accordion type="single" collapsible className="w-full">
+              {result.claims.claims.map((claim, i) => (
+                <AccordionItem value={`item-${i}`} key={i}>
+                  <AccordionTrigger>
+                    <div className="flex items-center text-left">
+                      {claimCredibilityIcons[claim.credibility] || <AlertTriangle className="mr-2 h-5 w-5 flex-shrink-0 text-gray-500" />}
+                      <span className="font-medium">{claim.claim}</span>
+                    </div>
+                  </AccordionTrigger>
+                  <AccordionContent className="text-muted-foreground">{claim.reason}</AccordionContent>
+                </AccordionItem>
+              ))}
+            </Accordion>
+           ) : (
+            <p className="text-muted-foreground">No specific claims were identified for analysis.</p>
+           )}
         </CardContent>
       </Card>
       
