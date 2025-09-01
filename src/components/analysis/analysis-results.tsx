@@ -6,6 +6,7 @@ import {
   FileEdit,
   FlaskConical,
   GitCommit,
+  Globe,
   Lightbulb,
   MousePointerClick,
   Network,
@@ -16,7 +17,7 @@ import {
   ThumbsUp,
   XCircle,
 } from 'lucide-react';
-import type { AnalysisResult, TextAnalysisResult, ImageAnalysisResult } from '@/lib/types';
+import type { AnalysisResult, TextAnalysisResult, ImageAnalysisResult, NewsSourceAnalysisResult } from '@/lib/types';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -193,12 +194,44 @@ function ImageAnalysisView({ result }: { result: ImageAnalysisResult }) {
     );
 }
 
+function NewsSourceAnalysisView({ result }: { result: NewsSourceAnalysisResult }) {
+    return (
+        <Card>
+            <CardHeader>
+                <CardTitle>News Source Analysis</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+                <div className="flex flex-col sm:flex-row gap-4 items-center">
+                    {result.isFakeNews ? 
+                        <AlertTriangle className="w-16 h-16 text-destructive" /> : 
+                        <CheckCircle2 className="w-16 h-16 text-green-500" />
+                    }
+                    <div className="flex-1">
+                        <h3 className="text-2xl font-bold">
+                            {result.isFakeNews ? "Unreliable Source" : "Reputable Source"}
+                        </h3>
+                         <p className="text-lg text-muted-foreground">
+                            {result.isFakeNews ? "This source may contain misinformation." : "This source is generally considered reliable."}
+                        </p>
+                    </div>
+                </div>
+                <Separator />
+                <div>
+                    <h4 className="font-semibold">Reasoning:</h4>
+                    <p className="text-muted-foreground">{result.reason}</p>
+                </div>
+            </CardContent>
+        </Card>
+    );
+}
+
 
 export function AnalysisResults({ result }: { result: AnalysisResult }) {
   return (
     <div className="mt-8 animate-fade-in">
         {result.type === 'text' && <TextAnalysisView result={result.data} />}
         {result.type === 'image' && <ImageAnalysisView result={result.data} />}
+        {result.type === 'news_source' && <NewsSourceAnalysisView result={result.data} />}
     </div>
   );
 }

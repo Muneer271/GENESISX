@@ -1,5 +1,5 @@
 import { AnalysisForm } from '@/components/analysis/analysis-form';
-import { analyzeContent, analyzeImage } from '@/app/actions';
+import { analyzeContent, analyzeImage, analyzeNewsSource } from '@/app/actions';
 
 export default function Home() {
   return (
@@ -12,7 +12,7 @@ export default function Home() {
           Paste text, a URL, or upload an image to get an instant credibility report powered by AI.
         </p>
       </div>
-      <AnalysisForm analyzeContent={analyzeContent} analyzeImage={analyzeImage} />
+      <AnalysisForm analyzeContent={analyzeContent} analyzeImage={analyzeImage} analyzeNewsSource={analyzeNewsSource} />
     </div>
   );
 }

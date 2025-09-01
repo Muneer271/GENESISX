@@ -5,6 +5,7 @@ import type {
   AnalyzeContentClaimsOutput,
   ExplainCredibilityAssessmentOutput,
   AnalyzeMultimodalContentOutput,
+  DetectFakeNewsSourceOutput,
 } from '@/ai/flows';
 
 export type TextAnalysisResult = {
@@ -17,6 +18,9 @@ export type TextAnalysisResult = {
 
 export type ImageAnalysisResult = AnalyzeMultimodalContentOutput;
 
+export type NewsSourceAnalysisResult = DetectFakeNewsSourceOutput;
+
 export type AnalysisResult =
   | { type: 'text'; data: TextAnalysisResult }
-  | { type: 'image'; data: ImageAnalysisResult };
+  | { type: 'image'; data: ImageAnalysisResult }
+  | { type: 'news_source'; data: NewsSourceAnalysisResult };

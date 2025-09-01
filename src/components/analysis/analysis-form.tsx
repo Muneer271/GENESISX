@@ -1,9 +1,9 @@
 'use client';
 
-import { useActionState, useEffect, useRef, useState } from 'react';
+import { useActionState, useEffect, useRef, useState, useMemo } from 'react';
 import { useFormStatus } from 'react-dom';
 import Image from 'next/image';
-import { AlertCircle, Image as ImageIcon, Loader2, Send } from 'lucide-react';
+import { AlertCircle, Image as ImageIcon, Link as LinkIcon, Loader2, Send } from 'lucide-react';
 
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
@@ -38,18 +38,31 @@ function SubmitButton({ icon, text }: { icon: React.ReactNode, text: string }) {
 export function AnalysisForm({
   analyzeContent,
   analyzeImage,
+  analyzeNewsSource,
 }: {
   analyzeContent: Action;
   analyzeImage: Action;
+  analyzeNewsSource: Action;
 }) {
   const { toast } = useToast();
-  const [contentState, contentAction] = useActionState(analyzeContent, { result: null, error: null, timestamp: 0 });
-  const [imageState, imageAction] = useActionState(analyzeImage, { result: null, error: null, timestamp: 0 });
+  const [contentState, contentAction, isContentPending] = useActionState(analyzeContent, { result: null, error: null, timestamp: 0 });
+  const [imageState, imageAction, isImagePending] = useActionState(analyzeImage, { result: null, error: null, timestamp: 0 });
+  const [newsSourceState, newsSourceAction, isNewsSourcePending] = useActionState(analyzeNewsSource, { result: null, error: null, timestamp: 0 });
+  
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const imageInputRef = useRef<HTMLInputElement>(null);
-  const formRef = useRef<HTMLFormElement>(null);
+  const contentFormRef = useRef<HTMLFormElement>(null);
+  const imageFormRef = useRef<HTMLFormElement>(null);
+  const newsSourceFormRef = useRef<HTMLFormElement>(null);
 
-  const activeState = contentState.timestamp > imageState.timestamp ? contentState : imageState;
+
+  const activeState = useMemo(() => {
+      const states = [contentState, imageState, newsSourceState];
+      return states.reduce((latest, current) => (current.timestamp > latest.timestamp ? current : latest));
+  }, [contentState, imageState, newsSourceState]);
+  
+  const isPending = isContentPending || isImagePending || isNewsSourcePending;
+
 
   useEffect(() => {
     if (activeState.error) {
@@ -75,12 +88,13 @@ export function AnalysisForm({
   return (
     <>
       <Tabs defaultValue="text" className="w-full">
-        <TabsList className="grid w-full grid-cols-2">
+        <TabsList className="grid w-full grid-cols-3">
           <TabsTrigger value="text">Text or URL</TabsTrigger>
           <TabsTrigger value="image">Image</TabsTrigger>
+          <TabsTrigger value="news_source">News Source</TabsTrigger>
         </TabsList>
         <TabsContent value="text">
-          <form action={contentAction} className="space-y-4">
+          <form action={contentAction} ref={contentFormRef} className="space-y-4">
             <Textarea
               name="content"
               placeholder="Paste an article, text, or a URL to analyze..."
@@ -93,7 +107,7 @@ export function AnalysisForm({
           </form>
         </TabsContent>
         <TabsContent value="image">
-          <form action={imageAction} ref={formRef}>
+          <form action={imageAction} ref={imageFormRef} className="space-y-4">
             <div className="space-y-4">
               <div className="grid w-full items-center gap-1.5">
                 <Label htmlFor="image-upload">Upload an Image</Label>
@@ -110,7 +124,7 @@ export function AnalysisForm({
               </div>
               {imagePreview && (
                 <div className="relative mt-4 h-64 w-full overflow-hidden rounded-md border">
-                  <Image src={imagePreview} alt="Image preview" layout="fill" objectFit="contain" />
+                  <Image src={imagePreview} alt="Image preview" fill objectFit="contain" />
                 </div>
               )}
               <div className="flex justify-end">
@@ -119,9 +133,23 @@ export function AnalysisForm({
             </div>
           </form>
         </TabsContent>
+         <TabsContent value="news_source">
+          <form action={newsSourceAction} ref={newsSourceFormRef} className="space-y-4">
+            <Input
+              name="url"
+              placeholder="https://example-news-source.com"
+              className="text-base"
+              required
+              type="url"
+            />
+            <div className="flex justify-end">
+              <SubmitButton icon={<LinkIcon className="mr-2 h-4 w-4" />} text="Analyze Source" />
+            </div>
+          </form>
+        </TabsContent>
       </Tabs>
 
-      {useFormStatus().pending && (
+      {isPending && (
         <div className="mt-8 rounded-lg border bg-card p-8 text-center">
           <Loader2 className="mx-auto h-12 w-12 animate-spin text-primary" />
           <p className="mt-4 text-lg font-semibold">Performing analysis...</p>
@@ -129,7 +157,7 @@ export function AnalysisForm({
         </div>
       )}
 
-      {activeState.error && !useFormStatus().pending && (
+      {activeState.error && !isPending && (
          <Alert variant="destructive" className="mt-8">
             <AlertCircle className="h-4 w-4" />
             <AlertTitle>Analysis Error</AlertTitle>
@@ -137,7 +165,7 @@ export function AnalysisForm({
           </Alert>
       )}
 
-      {activeState.result && !useFormStatus().pending && <AnalysisResults result={activeState.result} />}
+      {activeState.result && !isPending && <AnalysisResults result={activeState.result} />}
     </>
   );
 }

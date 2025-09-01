@@ -4,3 +4,4 @@ export * from './analyze-content-credibility';
 export * from './detect-misinformation-category';
 export * from './explain-credibility-assessments';
 export * from './analyze-multimodal-content';
+export * from './detect-fake-news-source';

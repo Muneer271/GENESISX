@@ -7,3 +7,4 @@ import '@/ai/flows/explain-credibility-assessments.ts';
 import '@/ai/flows/analyze-content-claims.ts';
 import '@/ai/flows/analyze-content-bias-sentiment.ts';
 import '@/ai/flows/analyze-content-credibility.ts';
+import '@/ai/flows/detect-fake-news-source.ts';
