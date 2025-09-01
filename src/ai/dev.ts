@@ -10,3 +10,4 @@ import '@/ai/flows/analyze-content-credibility.ts';
 import '@/ai/flows/detect-fake-news-source.ts';
 import '@/ai/flows/summarize-fact-check.ts';
 import '@/ai/flows/analyze-emotional-tone.ts';
+import '@/ai/flows/generate-quiz-question.ts';

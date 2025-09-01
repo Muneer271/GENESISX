@@ -8,3 +8,4 @@ export * from './analyze-multimodal-content';
 export * from './detect-fake-news-source';
 export * from './summarize-fact-check';
 export * from './analyze-emotional-tone';
+export * from './generate-quiz-question';
