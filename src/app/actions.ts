@@ -48,7 +48,7 @@ export async function analyzeContent(
       analyzeContentCredibility({ content }),
       detectMisinformationCategory({ content }),
       analyzeContentBiasAndSentiment({ content }),
-      analyzeContentClaims(content),
+      analyzeContentClaims({ content }),
     ]);
 
     const explanation = await explainCredibilityAssessment({

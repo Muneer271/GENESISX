@@ -5,14 +5,16 @@
  *
  * It exports:
  * - `analyzeContentClaims`: An async function that takes text content as input and returns an analysis of individual claims, indicating whether they are credible, misleading, or unsupported.
- * - `AnalyzeContentClaimsInput`: The input type for the analyzeContentClaims function, which is a string.
+ * - `AnalyzeContentClaimsInput`: The input type for the analyzeContentClaims function, which is an object containing the content string.
  * - `AnalyzeContentClaimsOutput`: The output type for the analyzeContentClaims function, an array of claim analysis results.
  */
 
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
 
-const AnalyzeContentClaimsInputSchema = z.string().describe('The text content to analyze for claim credibility.');
+const AnalyzeContentClaimsInputSchema = z.object({
+  content: z.string().describe('The text content to analyze for claim credibility.'),
+});
 export type AnalyzeContentClaimsInput = z.infer<typeof AnalyzeContentClaimsInputSchema>;
 
 const ClaimAnalysisResultSchema = z.object({
@@ -37,7 +39,7 @@ const analyzeContentClaimsPrompt = ai.definePrompt({
   output: {schema: AnalyzeContentClaimsOutputSchema},
   prompt: `You are an expert fact-checker and claim analyst. Your task is to analyze the provided text content and break it down into individual, key claims. For each claim, you must assess its credibility, determining whether it is credible, misleading, or unsupported. Provide a brief reason for your assessment. Structure your output as a JSON array, where each object in the array represents a claim and its analysis.
 
-Text Content: {{{$input}}}
+Text Content: {{{content}}}
 
 Example Output:
 [
