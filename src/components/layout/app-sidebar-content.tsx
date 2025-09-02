@@ -28,7 +28,7 @@ export default function AppSidebarContent() {
     <div className="flex h-full flex-col p-4">
       <div className="mb-8 flex items-center gap-2">
         <ShieldCheck className="h-8 w-8 text-primary" />
-        <h1 className="text-xl font-bold text-foreground">Verity Vista</h1>
+        <h1 className="text-xl font-bold text-foreground">GenesisX</h1>
       </div>
       <nav className="flex-1 space-y-1">
         {navItems.map((item) => (

@@ -26,7 +26,7 @@ export function MobileHeader() {
       </Sheet>
       <Link href="/" className="flex items-center gap-2 font-bold">
         <ShieldCheck className="h-6 w-6 text-primary" />
-        <span className="text-lg">Verity Vista</span>
+        <span className="text-lg">GenesisX</span>
       </Link>
     </header>
   );

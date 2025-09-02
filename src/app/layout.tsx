@@ -6,7 +6,7 @@ import DesktopSidebar from '@/components/layout/desktop-sidebar';
 import { MobileHeader } from '@/components/layout/mobile-header';
 
 export const metadata: Metadata = {
-  title: 'Verity Vista',
+  title: 'GenesisX',
   description: 'AI-powered content credibility analysis',
 };
 
