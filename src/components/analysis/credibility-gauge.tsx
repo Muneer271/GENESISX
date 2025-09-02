@@ -10,13 +10,13 @@ const getColor = (score: number) => {
 };
 
 export function CredibilityGauge({ score }: { score: number }) {
-  const [isClient, setIsClient] = useState(false);
+  const [displayScore, setDisplayScore] = useState(0);
 
   useEffect(() => {
-    setIsClient(true);
-  }, []);
+    // This ensures the score is only set on the client after mounting.
+    setDisplayScore(score);
+  }, [score]);
 
-  const displayScore = isClient ? score : 0;
   const clampedScore = Math.min(Math.max(displayScore, 0), 1);
   const circumference = 2 * Math.PI * 40;
   const arcLength = (clampedScore * circumference) / 2;
