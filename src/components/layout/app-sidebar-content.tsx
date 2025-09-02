@@ -54,7 +54,7 @@ export default function AppSidebarContent() {
               <AvatarFallback>U</AvatarFallback>
             </Avatar>
             <div className="flex flex-col text-left">
-              <span className="text-sm font-medium">Alex Doe</span>
+              <span className="text-sm font-medium">GenesisX</span>
               <span className="text-xs text-muted-foreground">
                 alex.doe@example.com
               </span>
