@@ -10,14 +10,38 @@ const getColor = (score: number) => {
 };
 
 export function CredibilityGauge({ score }: { score: number }) {
-  const [displayScore, setDisplayScore] = useState(0);
+  const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
-    // This ensures the score is only set on the client after mounting.
-    setDisplayScore(score);
-  }, [score]);
+    // This effect runs only on the client, after the component has mounted.
+    setIsClient(true);
+  }, []);
 
-  const clampedScore = Math.min(Math.max(displayScore, 0), 1);
+  // On the server or during the initial client render, we don't know the exact score yet.
+  // We'll render a placeholder or nothing to avoid the mismatch.
+  if (!isClient) {
+    return (
+      <div className="relative flex h-32 w-64 items-end justify-center">
+        <svg className="h-full w-full" viewBox="0 0 100 50">
+          <path
+            d="M 10 50 A 40 40 0 0 1 90 50"
+            fill="none"
+            stroke="hsl(var(--muted))"
+            strokeWidth="8"
+            strokeLinecap="round"
+          />
+        </svg>
+        <div className="absolute bottom-0 flex flex-col items-center">
+          <span className="text-4xl font-bold text-muted-foreground">
+            -
+          </span>
+          <span className="text-sm font-medium text-muted-foreground">Credibility Score</span>
+        </div>
+      </div>
+    );
+  }
+
+  const clampedScore = Math.min(Math.max(score, 0), 1);
   const circumference = 2 * Math.PI * 40;
   const arcLength = (clampedScore * circumference) / 2;
   const color = getColor(clampedScore);
@@ -45,7 +69,7 @@ export function CredibilityGauge({ score }: { score: number }) {
       </svg>
       <div className="absolute bottom-0 flex flex-col items-center">
         <span className="text-4xl font-bold" style={{ color }}>
-          {Math.round(displayScore * 100)}
+          {Math.round(clampedScore * 100)}
         </span>
         <span className="text-sm font-medium text-muted-foreground">Credibility Score</span>
       </div>
