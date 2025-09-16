@@ -4,45 +4,18 @@
 
 @layer base {
   :root {
-    --background: 197 92% 95%; /* #E5F6FE */
-    --foreground: 222.2 84% 4.9%;
+    --background-start-rgb: 4, 6, 12;
+    --background-end-rgb: 18, 22, 33;
+    --border-glow-rgb: 200, 200, 220;
+    --highlight-rgb: 255, 255, 255;
 
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
-
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-
-    --primary: 197 76% 53%; /* #29ABE2 */
-    --primary-foreground: 210 40% 98%;
-
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 84% 4.9%;
-
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-
-    --accent: 45 100% 51%; /* #FFC107 */
-    --accent-foreground: 24 9.8% 10%;
-
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 197 76% 53%;
-
-    --radius: 0.5rem;
-  }
-
-  .dark {
     --background: 222.2 84% 4.9%;
     --foreground: 210 40% 98%;
 
-    --card: 222.2 84% 4.9%;
+    --card: 224 71% 4%;
     --card-foreground: 210 40% 98%;
 
-    --popover: 222.2 84% 4.9%;
+    --popover: 224 71% 4%;
     --popover-foreground: 210 40% 98%;
 
     --primary: 197 76% 53%;
@@ -56,7 +29,44 @@
 
     --accent: 45 100% 51%;
     --accent-foreground: 24 9.8% 10%;
+    
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
 
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 197 76% 53%;
+
+    --radius: 0.75rem;
+  }
+
+  .dark {
+    --background-start-rgb: 4, 6, 12;
+    --background-end-rgb: 18, 22, 33;
+    --border-glow-rgb: 200, 200, 220;
+    --highlight-rgb: 255, 255, 255;
+    
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+
+    --card: 224 71% 4%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 224 71% 4%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 197 76% 53%;
+    --primary-foreground: 210 40% 98%;
+
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+
+    --accent: 45 100% 51%;
+    --accent-foreground: 24 9.8% 10%;
+    
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 210 40% 98%;
 
@@ -70,7 +80,94 @@
   * {
     @apply border-border;
   }
+  html {
+      @apply dark;
+  }
   body {
     @apply bg-background text-foreground;
+    background-color: rgb(var(--background-start-rgb));
+    background-image: radial-gradient(ellipse at top, rgba(var(--background-end-rgb), 0.5) 20%, transparent), radial-gradient(ellipse at bottom, hsl(var(--primary) / 0.2) 10%, transparent 60%);
   }
+
+  .glass-card {
+    @apply bg-white/5 backdrop-blur-lg border border-white/5 rounded-2xl shadow-lg;
+    box-shadow: 0 0 0 1px rgba(var(--border-glow-rgb), 0.08), 0px 4px 6px -1px rgba(0,0,0,0.1), 0px 2px 4px -2px rgba(0,0,0,0.1);
+    transition: box-shadow 0.3s ease, background-color 0.3s ease;
+  }
+  
+  .glass-card:hover {
+    box-shadow: 0 0 0 1px rgba(var(--border-glow-rgb), 0.15), 0px 8px 12px -4px rgba(0,0,0,0.15), 0px 4px 6px -4px rgba(0,0,0,0.15);
+  }
+
+  .glass-interactive {
+    @apply bg-white/5 backdrop-blur-lg border border-white/5 rounded-lg shadow-sm;
+    box-shadow: 0 0 0 1px rgba(var(--border-glow-rgb), 0.05), inset 0 1px 1px rgba(var(--highlight-rgb), 0.03);
+    transition: box-shadow 0.3s ease, background-color 0.3s ease;
+  }
+
+  .glass-interactive:hover {
+    @apply bg-white/10;
+    box-shadow: 0 0 0 1px rgba(var(--border-glow-rgb), 0.1), inset 0 1px 1px rgba(var(--highlight-rgb), 0.05);
+  }
+  
+  .glass-interactive:focus-visible {
+    @apply ring-2 ring-offset-2 ring-offset-background ring-primary bg-white/10;
+     box-shadow: 0 0 0 1px hsl(var(--primary)), inset 0 1px 1px rgba(var(--highlight-rgb), 0.05);
+  }
+
+  .btn-glass {
+    @apply bg-white/10 backdrop-blur-xl border border-white/10 rounded-lg shadow-lg text-foreground;
+    box-shadow: 0 0 0 1px rgba(var(--border-glow-rgb), 0.08), inset 0 1px 2px rgba(var(--highlight-rgb), 0.05);
+    transition: all 0.2s ease-in-out;
+  }
+
+  .btn-glass:hover {
+    @apply bg-white/20 border-white/20;
+     box-shadow: 0 0 0 1px rgba(var(--border-glow-rgb), 0.15), 0 4px 15px rgba(0,0,0,0.2), inset 0 1px 2px rgba(var(--highlight-rgb), 0.1);
+     transform: translateY(-1px);
+  }
+
+  .btn-glass:active {
+    @apply bg-white/5 border-white/5;
+     box-shadow: inset 0 2px 4px rgba(0,0,0,0.15);
+     transform: translateY(0px);
+  }
+
+  .btn-glass.btn-primary {
+    @apply bg-primary/20 border-primary/20 text-primary-foreground;
+    box-shadow: 0 0 0 1px hsl(var(--primary) / 0.3), inset 0 1px 1px rgba(var(--highlight-rgb), 0.1);
+  }
+  .btn-glass.btn-primary:hover {
+    @apply bg-primary/30 border-primary/30;
+    box-shadow: 0 0 0 1px hsl(var(--primary) / 0.5), 0 4px 15px hsla(var(--primary) / 0.2), inset 0 1px 1px rgba(var(--highlight-rgb), 0.1);
+  }
+}
+
+@layer components {
+    .card {
+        @apply glass-card;
+    }
+    .input, .textarea {
+        @apply glass-interactive;
+    }
+    .button {
+        @apply btn-glass;
+    }
+     .button[data-variant="default"] {
+        @apply btn-glass btn-primary;
+    }
+    .tabs-list {
+      @apply bg-white/5 backdrop-blur-lg border border-white/5 rounded-xl;
+    }
+    .tabs-trigger[data-state=active] {
+      @apply bg-white/10;
+    }
+
+    .accordion-item {
+        @apply border-white/10;
+    }
+    .sheet-content {
+      @apply bg-background/80 backdrop-blur-xl border-white/10;
+    }
+
 }
