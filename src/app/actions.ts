@@ -2,7 +2,10 @@
 
 import { z } from 'zod';
 import {
-  analyzeTextContent,
+  analyzeContentCredibility,
+  analyzeContentBiasAndSentiment,
+  analyzeEmotionalTone,
+  detectMisinformationCategory,
   analyzeContentClaims,
   explainCredibilityAssessment,
   analyzeMultimodalContent,
@@ -49,39 +52,28 @@ export async function analyzeContent(
   try {
     const content = validatedFields.data.content;
 
-    const [analysis, claims] = await Promise.all([
-      analyzeTextContent({ content }),
-      analyzeContentClaims({ content }),
+    const [credibility, categories, biasSentiment, emotionalTone, claims] = await Promise.all([
+        analyzeContentCredibility({ content }),
+        detectMisinformationCategory({ content }),
+        analyzeContentBiasAndSentiment({ content }),
+        analyzeEmotionalTone({ content }),
+        analyzeContentClaims({ content }),
     ]);
 
     const [explanation, factCheckSummary] = await Promise.all([
       explainCredibilityAssessment({
         content,
-        assessmentScore: analysis.credibilityScore,
-        flaggedPatterns: analysis.flaggedPatterns,
+        assessmentScore: credibility.credibilityScore,
+        flaggedPatterns: credibility.flaggedPatterns,
       }),
       summarizeFactCheck({ claims: claims.claims }),
     ]);
 
     const resultData: TextAnalysisResult = {
-      credibility: {
-        credibilityScore: analysis.credibilityScore,
-        misinformationRiskLevel: analysis.misinformationRiskLevel,
-        flaggedPatterns: analysis.flaggedPatterns,
-      },
-      categories: {
-        categories: analysis.misinformationCategories,
-      },
-      biasSentiment: {
-        bias: analysis.bias,
-        sentiment: analysis.sentiment,
-        explanation: '', // This can be generated or removed if not needed. For now, empty.
-      },
-      emotionalTone: {
-        tone: analysis.emotionalTone,
-        virality: analysis.virality,
-        explanation: '', // This can be generated or removed. For now, empty.
-      },
+      credibility,
+      categories,
+      biasSentiment,
+      emotionalTone,
       claims,
       explanation,
       factCheckSummary,
