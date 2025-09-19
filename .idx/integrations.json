@@ -2,5 +2,7 @@
   "firebase_hosting": {
     "deploymentHostingUrl": "https://verity-vista-6jfxc.web.app"
   },
-  "gemini_api": {}
+  "cloud_run_deploy": {},
+  "gemini_api": {},
+  "secrets_manager": {}
 }
