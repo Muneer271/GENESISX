@@ -1,5 +1,5 @@
-{
+echo '{
   "projects": {
     "default": "verity-vista-6jfxc"
   }
-}
+}' > .firebaserc

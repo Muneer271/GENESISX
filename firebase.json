@@ -1,13 +1,11 @@
 {
   "hosting": {
-    "source": ".",
+    "site": "verity-vista-6jfxc-46bf7",
+    "public": "build",
     "ignore": [
       "firebase.json",
       "**/.*",
       "**/node_modules/**"
-    ],
-    "frameworksBackend": {
-      "region": "us-central1"
-    }
+    ]
   }
 }
