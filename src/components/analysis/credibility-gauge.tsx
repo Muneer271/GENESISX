@@ -13,12 +13,9 @@ export function CredibilityGauge({ score }: { score: number }) {
   const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
-    // This effect runs only on the client, after the component has mounted.
     setIsClient(true);
   }, []);
 
-  // On the server or during the initial client render, we don't know the exact score yet.
-  // We'll render a placeholder or nothing to avoid the mismatch.
   if (!isClient) {
     return (
       <div className="relative flex h-32 w-64 items-end justify-center">
