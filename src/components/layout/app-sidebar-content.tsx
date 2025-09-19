@@ -50,7 +50,7 @@ export default function AppSidebarContent() {
         <Link href="/profile">
           <div className="flex items-center gap-3">
             <Avatar className="h-9 w-9">
-              <AvatarImage src="https://picsum.photos/100" alt="User Avatar" data-ai-hint="profile picture" />
+              <AvatarImage src="https://picsum.photos/seed/123/100" alt="User Avatar" data-ai-hint="profile picture" />
               <AvatarFallback>U</AvatarFallback>
             </Avatar>
             <div className="flex flex-col text-left">
