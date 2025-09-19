@@ -2,15 +2,12 @@
 
 import { z } from 'zod';
 import {
-  analyzeContentBiasAndSentiment,
+  analyzeTextContent,
   analyzeContentClaims,
-  analyzeContentCredibility,
-  detectMisinformationCategory,
   explainCredibilityAssessment,
   analyzeMultimodalContent,
   detectFakeNewsSource,
   summarizeFactCheck,
-  analyzeEmotionalTone,
 } from '@/ai/flows';
 import type { TextAnalysisResult, ImageAnalysisResult, NewsSourceAnalysisResult } from '@/lib/types';
 
@@ -52,24 +49,43 @@ export async function analyzeContent(
   try {
     const content = validatedFields.data.content;
 
-    const [credibility, categories, biasSentiment, claims, emotionalTone] = await Promise.all([
-      analyzeContentCredibility({ content }),
-      detectMisinformationCategory({ content }),
-      analyzeContentBiasAndSentiment({ content }),
+    const [analysis, claims] = await Promise.all([
+      analyzeTextContent({ content }),
       analyzeContentClaims({ content }),
-      analyzeEmotionalTone({ content }),
     ]);
 
     const [explanation, factCheckSummary] = await Promise.all([
       explainCredibilityAssessment({
         content,
-        assessmentScore: credibility.credibilityScore,
-        flaggedPatterns: credibility.flaggedPatterns,
+        assessmentScore: analysis.credibilityScore,
+        flaggedPatterns: analysis.flaggedPatterns,
       }),
       summarizeFactCheck({ claims: claims.claims }),
     ]);
 
-    const resultData: TextAnalysisResult = { credibility, categories, biasSentiment, claims, explanation, factCheckSummary, emotionalTone };
+    const resultData: TextAnalysisResult = {
+      credibility: {
+        credibilityScore: analysis.credibilityScore,
+        misinformationRiskLevel: analysis.misinformationRiskLevel,
+        flaggedPatterns: analysis.flaggedPatterns,
+      },
+      categories: {
+        categories: analysis.misinformationCategories,
+      },
+      biasSentiment: {
+        bias: analysis.bias,
+        sentiment: analysis.sentiment,
+        explanation: '', // This can be generated or removed if not needed. For now, empty.
+      },
+      emotionalTone: {
+        tone: analysis.emotionalTone,
+        virality: analysis.virality,
+        explanation: '', // This can be generated or removed. For now, empty.
+      },
+      claims,
+      explanation,
+      factCheckSummary,
+    };
 
     return {
       result: { type: 'text', data: resultData },
