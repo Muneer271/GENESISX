@@ -1,6 +1,6 @@
 import type {
   AnalyzeContentCredibilityOutput,
-  DetectMisinfornationCategoryOutput,
+  DetectMisinformationCategoryOutput,
   AnalyzeContentBiasAndSentimentOutput,
   AnalyzeEmotionalToneOutput,
   AnalyzeContentClaimsOutput,
@@ -12,7 +12,7 @@ import type {
 
 export type TextAnalysisResult = {
   credibility: AnalyzeContentCredibilityOutput;
-  categories: DetectMisinfornationCategoryOutput;
+  categories: DetectMisinformationCategoryOutput;
   biasSentiment: AnalyzeContentBiasAndSentimentOutput;
   emotionalTone: AnalyzeEmotionalToneOutput;
   claims: AnalyzeContentClaimsOutput;
